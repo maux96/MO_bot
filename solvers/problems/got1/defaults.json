@@ -1,0 +1,23 @@
+{	
+	"hierro":600000,
+	"madera":400000,
+	"cuero":800000,
+
+
+	"c_h_sword":10,
+	"c_m_sword":2,
+	"c_c_sword":4,
+
+	"c_h_bow":2,
+	"c_m_bow":10,
+	"c_c_bow":5,
+
+	"c_h_catapult":30,
+	"c_m_catapult":100,
+	"c_c_catapult":50,
+
+
+	"sword_damage":15,
+	"bow_damage":10,
+	"catapult_damage":80
+}
