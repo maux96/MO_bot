@@ -1,6 +1,31 @@
 {
 	"id":"got1",
 	"title": "Game Of Thrones I",
-	"text": "Casa Mormont\n Necesitamos que le diga a los jefes de la casa que cantidad de espadas, arcos y catapultas deben fabricar \n Necesitamos realizar el mayor daño posible a las tropas enemigas para alcanzar la victoria\n Las espadas se rompen al realizar 15 de daño, los arcos al realizar 10 y las catapultas al realizar 80\n Las catapultas no hacen daño en área (menuda estafa de sistema)"
+	"text": "Casa Mormont\nNecesitamos que le diga a los jefes de la casa que cantidad de espadas, arcos y catapultas deben fabricar \n Necesitamos realizar el mayor daño posible a las tropas enemigas para alcanzar la victoria\nLas espadas se rompen al realizar 15 de daño, los arcos al realizar 10 y las catapultas al realizar 80\nLas catapultas no hacen daño en área (menuda estafa de sistema)",
+	"used_vars":[
+		{"name":"amount_swords","text":"Cantidad de espadas."},
+		{"name":"amount_bows","text":"Cantidad de arcos."},
+		{"name":"amount_catapults","text":"Cantidad de catapultas."}
+	],
+	"used_params":[
+		{"name":"hierro","text":"Cantidad de hierro disponible."},
+		{"name":"madera","text":"Cantidad de madera disponible."},
+		{"name":"cuero","text":"Cantidad de cuero disponible."},
 
+    	{"name":"c_h_sword","text":"Cantidad de hierro para crear una espada."},
+    	{"name":"c_m_sword","text":"Cantidad de madera para crear una espada."},
+    	{"name":"c_c_sword","text":"Cantidad de cuero para crear una espada. "},
+
+    	{"name":"c_h_bow","text":"Cantidad de hierro para crear un arco."},
+    	{"name":"c_m_bow","text":"Cantidad de madera para crear un arco."},
+    	{"name":"c_c_bow","text":"Cantidad de cuero para crear un arco. "},
+    	{"name":"c_h_catapult","text":"Cantidad de hierro para crear un catapulta."},
+    	{"name":"c_m_catapult","text":"Cantidad de madera para crear un catapulta."},
+    	{"name":"c_c_catapult","text":"Cantidad de cuero para crear un catapulta. "},
+
+    	{"name":"sword_damage","text":"Daño total hecho por cada espada."},
+    	{"name":"bow_damage","text":"Daño total hecho por cada arco."},
+    	{"name":"catapult_damage","text":"Daño total hecho por cada catapulta."}
+	]
 }
+

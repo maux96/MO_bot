@@ -1,8 +1,9 @@
 #!../env/bin/python3
 from os import environ
+from json import load, dumps
 
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, MessageHandler , Filters
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, CallbackContext, MessageHandler , Filters
 
 from exception_handler import handleExceptions, handleUnderConstruction
 from solvers.dynamic_load import verify_solution, enumerate_solvers, get_solver_info
@@ -10,6 +11,7 @@ from solvers.dynamic_load import verify_solution, enumerate_solvers, get_solver_
 TOKEN = environ["TOKEN"]
 
 ID_PREFIX = "/i__"
+GEN_JSON_PREFIX = "GEN_JSON_"
 
 def main():
     
@@ -24,8 +26,9 @@ def main():
     dp.add_handler(CommandHandler("enum", enumerate_problems_id))
 
     dp.add_handler(MessageHandler(Filters.regex('^'+ID_PREFIX),callback=solver_info))
-
+    
     dp.add_handler(MessageHandler(Filters.document, send_solution, run_async=True))
+    dp.add_handler(CallbackQueryHandler(pattern="^"+GEN_JSON_PREFIX,callback=button_gen_json))
 
     updater.start_polling()
     updater.idle()
@@ -41,7 +44,6 @@ def start(update : Update, context : CallbackContext):
     pass
 
 @handleExceptions
-@handleUnderConstruction
 def send_solution(update : Update, context : CallbackContext):
     id = update.message.from_user.id 
      
@@ -73,7 +75,6 @@ def identify_student(update : Update, context : CallbackContext):
     pass
 
 @handleExceptions
-@handleUnderConstruction
 def enumerate_problems_id(update : Update, context : CallbackContext):
     
     s = "Solvers disponibles: \n\n- "
@@ -81,13 +82,28 @@ def enumerate_problems_id(update : Update, context : CallbackContext):
 
 
 @handleExceptions
-@handleUnderConstruction
 def solver_info(update : Update, context : CallbackContext):
     solver_id = update.message.text[len(ID_PREFIX):]
     solver_info=get_solver_info(solver_id)
-    solver_info = f'{solver_info["title"]}\n(id: {solver_info["id"]})\n\n {solver_info["text"]}'
+    solver_info = f'{solver_info["title"]}\n(id: {solver_info["id"]})\n\n {solver_info["text"]} \n\nVariables necesarias:\n -' + '\n -'.join([ var["name"]+" : "+var["text"] for var in  solver_info['used_vars']])
 
-    update.message.reply_text(solver_info)
+    buttons = [[InlineKeyboardButton("Generar JSON de respuesta",callback_data=GEN_JSON_PREFIX+solver_id)]]
+    update.message.reply_text(solver_info,reply_markup=InlineKeyboardMarkup(buttons))
+    
+    update.message.delete()
+
+
+@handleExceptions
+def button_gen_json(update : Update, context : CallbackContext):
+    q = update.callback_query
+
+    solver_id=q["data"][len(GEN_JSON_PREFIX):]
+    solver_info=get_solver_info(solver_id)
+        
+    #construimos el JSON
+    json = dumps({ v["name"]:"TU_SOLUCION"  for v in solver_info["used_vars"]})
+
+    q.from_user.send_message("Para el problema `"+ solver_id +"` crea un json parecido a este y mandalo con tu solucion```\n\n\n"+json+"```\n","Markdown")
 
 
 @handleExceptions
