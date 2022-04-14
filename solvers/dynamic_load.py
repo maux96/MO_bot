@@ -1,13 +1,14 @@
 from pathlib import Path
 from json import load 
 from io import StringIO
+from os import listdir
 
 def verify_solution(uploaded_json : str) :
     gived_solution=load(StringIO(uploaded_json))
     print(gived_solution)
     return dynamic_load(gived_solution["_id"],gived_solution["_values"])
 
-#retorna una lista de errores y  una lista de mensajes para el usuario
+#retorna una lista de errores y  una lista de mensajes para el usuario dado un id
 def dynamic_load(file_name : str, gived_solution : dict ,model_params:dict=None) -> (list[str],list[str]): 
 
     
@@ -32,6 +33,20 @@ def dynamic_load(file_name : str, gived_solution : dict ,model_params:dict=None)
     return  errors, success
 
 
+# enumera todos los identificadores de cada uno de los problemas
+def enumerate_solvers(id_prefix="/I__"):
+    ids=listdir(Path("solvers","problems"))
+    sol = []
+    for id in ids:
+        with open(Path("solvers","problems",id,"info.json")) as json:
+            sol.append(f'{load(json)["title"]} ({id_prefix+id})')
+    return sol
+
+# retorna un {} de la forma {'id':id,'title':title,'text':text}
+def get_solver_info(id):
+    with open(Path("solvers","problems",id,"info.json")) as json:
+        sol= load(json)
+    return sol        
 
 if __name__ == "__main__":
     #print(dynamic_load("got1", {"amount_swords":54167,"amount_bows":29165,"amount_catapuls":0,}))
