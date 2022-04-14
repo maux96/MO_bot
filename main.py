@@ -1,6 +1,6 @@
 #!../env/bin/python3
 from os import environ
-from json import load, dumps
+from json import dumps
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, CallbackContext, MessageHandler , Filters
@@ -101,17 +101,26 @@ def button_gen_json(update : Update, context : CallbackContext):
     solver_info=get_solver_info(solver_id)
         
     #construimos el JSON
-    json = dumps({ v["name"]:"TU_SOLUCION"  for v in solver_info["used_vars"]})
-
-    q.from_user.send_message("Para el problema `"+ solver_id +"` crea un json parecido a este y mandalo con tu solucion```\n\n\n"+json+"```\n","Markdown")
+    json = dumps({
+        "_id": solver_id,
+        "_values":{
+            v["name"]:"TU_SOLUCION"  for v in solver_info["used_vars"]
+        }
+    })
+    
+    mess = "Para el problema `"+ solver_id +"` crea un json parecido a este y mandalo con tu solucion"
+    mess+= "\n\n`"+json+"`\n\n"
+    mess+= 'Sustituye `"TU_SOLUCION"` por el valor asociado a cada variable. 🙆'
+    q.from_user.send_message(mess,"Markdown")
 
 
 @handleExceptions
 def help(update : Update, context : CallbackContext):
     message=""
-    message+="Puedes mandar las soluciones a en un `*.json`. Este tiene que tener el formato:\n\n"
+    message="Para conocer los solvers disponibles usa /enum.\n"
+    message+="Puedes mandar las soluciones en un `*.json`. Este tiene que tener el formato:\n\n"
     message+="""
-    ```
+    `
     {
         "_id":"<id_del_problema>",
 
@@ -124,7 +133,7 @@ def help(update : Update, context : CallbackContext):
             "varN": valueN
         }
     }
-    ```
+    `
     """
     message+="\n\n Siendo `_id` el identificador del problema y `valuei` el valor que considera el estudiante que es el correcto para una varible con nombre `vari`."
 
