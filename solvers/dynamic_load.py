@@ -5,13 +5,15 @@ from os import listdir
 
 def verify_solution(uploaded_json : str) :
     gived_solution=load(StringIO(uploaded_json))
+    model_parameters = None
+    if gived_solution.__contains__("_parameters"):
+        model_parameters = gived_solution["_parameters"] 
     #print(gived_solution)
-    return dynamic_load(gived_solution["_id"],gived_solution["_values"])
+    return dynamic_load(gived_solution["_id"],gived_solution["_values"], model_parameters)
 
 #retorna una lista de errores y  una lista de mensajes para el usuario dado un id
 def dynamic_load(file_name : str, gived_solution : dict ,model_params:dict=None) -> (list[str],list[str]): 
 
-    
     path=Path("solvers","problems",file_name,"solver.py")
 
     with open(path,"rb") as source:

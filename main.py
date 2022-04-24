@@ -150,11 +150,20 @@ def help(update : Update, context : CallbackContext):
                 .
                 .
             "varN": valueN
+        },
+        "_parameters:"{
+            "param1": valuep1,
+            "param2": valuep2,
+                .
+                .
+                .
+            "paramN": valuepN,
         }
     }
     `
     """
-    message+="\n\n Siendo `_id` el identificador del problema y `valuei` el valor que considera el estudiante que es el correcto para una varible con nombre `vari`."
+    message+="\n\n Siendo `_id` el identificador del problema y `valueI` el valor que considera el estudiante que es el correcto para una varible con nombre `varI`."
+    message+="\n No es necesario mandar el campo `_parameters`, en caso de no mandarse se asumen los parametros por defecto del problema."
     message+="\n\nEl control de errores que hay implementado es muuuuuy simple, asi q suave plis 😓...."
     update.message.reply_text(message,"Markdown")
     pass
