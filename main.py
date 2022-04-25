@@ -12,7 +12,8 @@ from utils import get_veredict
 TOKEN = environ["TOKEN"]
 
 ID_PREFIX = "/i__"
-GEN_JSON_PREFIX = "GEN_JSON_"
+GEN_JSON_PREFIX = "GEN_JSON_PREFIX_"
+GEN_JSON_SPECIFIC_PREFIX = "GEN_JSON_SPECIFIC_PREFIX_"
 
 
 
@@ -34,6 +35,7 @@ def main():
     dp.add_handler(MessageHandler(Filters.text, send_solution_in_message, run_async=True))
 
     dp.add_handler(CallbackQueryHandler(pattern="^"+GEN_JSON_PREFIX,callback=button_gen_json, run_async=True))
+    dp.add_handler(CallbackQueryHandler(pattern="^"+GEN_JSON_SPECIFIC_PREFIX,callback=button_gen_specific_json, run_async=True))
 
     updater.start_polling()
     updater.idle()
@@ -105,7 +107,10 @@ def solver_info(update : Update, context : CallbackContext):
     solver_info=get_solver_info(solver_id)
     solver_info = f'{solver_info["title"]}\n(id: {solver_info["id"]})\n\n {solver_info["text"]} \n\nVariables necesarias:\n -' + '\n -'.join([ var["name"]+" : "+var["text"] for var in  solver_info['used_vars']])
 
-    buttons = [[InlineKeyboardButton("Generar JSON de respuesta",callback_data=GEN_JSON_PREFIX+solver_id)]]
+    buttons = [
+        [InlineKeyboardButton("Generar JSON de respuesta",callback_data=GEN_JSON_PREFIX+solver_id)],
+        [InlineKeyboardButton("Generar JSON de respuesta específico ",callback_data=GEN_JSON_SPECIFIC_PREFIX+solver_id)],
+    ]
     update.message.reply_text(solver_info,reply_markup=InlineKeyboardMarkup(buttons))
     
     update.message.delete()
@@ -131,6 +136,32 @@ def button_gen_json(update : Update, context : CallbackContext):
     mess+= "\n\n`"+json+"`\n\n"
     mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor asociado a cada variable. 🙆'
     q.from_user.send_message(mess,"Markdown")
+
+def button_gen_specific_json(update : Update, context : CallbackContext):
+    q = update.callback_query
+    
+    solver_id=q["data"][len(GEN_JSON_SPECIFIC_PREFIX):]
+    
+    solver_info=get_solver_info(solver_id)
+        
+    #construimos el JSON
+    json = dumps({
+        "_id": solver_id,
+        "_values":{
+            v["name"]:"TU_SOLUCION"  for v in solver_info["used_vars"]
+        },
+        "_parameters":{
+            v["name"]:"TU_PARAMETRO"  for v in solver_info["used_params"]
+        }
+    })
+    
+    mess = "Para el problema `"+ solver_id +"` crea un json parecido a este y mandalo con tu solucion (puedes mandarla en un mensaje normal de Telegram 😉 )"
+    mess+= "\n\n`"+json+"`\n\n"
+    mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor asociado a cada variable. 🙆\n'
+    mess+= 'Sustituye `"TU PARAMETRO"` (quita las comillas 😅) por el valor asociado a cada parámetro. 🙆'
+    q.from_user.send_message(mess,"Markdown")
+
+
 
 
 @handleExceptions
