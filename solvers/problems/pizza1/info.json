@@ -1,0 +1,11 @@
+{ 
+    "id":"pizza1",
+    "title":"Pizzas Tantricas",
+    "text":"Una pareja quiere tener sexo, pero tiene hambre. Para resolver ese problema, deciden encargar la mejor pizza posible”, y para ello llaman a su pizzerı́a favorita que te permite encargar exactamente la pizza que quieras. Ellos solo ponen una base que tiene un costo de 1000, y a partir de ahı́ tú escoges qué agregos le quieres poner :-). De cada agrego conoces: cuán afrodisiaco es, cuánto sueño provoca, cuánto gusta, cuánta energı́a proporciona (o sea, cuánto llena) y el costo que tiene. Además, de cada participante se conoce su ”llenura (o hambre, o energı́a) inicial”, sus umbrales mı́nimos y máximos de llenura (si te pasas del máximo te da sueño y si no llegas al mı́nimo la cosa no funciona), su umbral de sueño y su excitación inicial. También se conoce a qué ingredientes es alérgica cada persona, y el dinero del que dispone cada persona. Se quiere diseñar la mejor pizza posible.",
+    "used_vars":[],
+    "used_params":[
+        {"name":"precio_base","text":"El precio base de la Pizza"},
+        {"name":"agregos","text":"Todos los agregos con sus respectivas caracteristicas\n`{\n\t'afrodisiaco':Number,\n\t,'sueño':Number,\n\t'gusta':Number,\n\t'energia':Number,\n\t'costo':Number\n}`"},
+        {"name":"participantes","text":"Todos los participantes con sus respectivas caracteristicas\n`{\n\t'llenura_inicial':Number,\n\t,'minima_llenura':Number,\n\t'maxima_llenura':Number,\n\t'dinero':Number,\n\t'exitacion_inicial':Number\n}`"}
+    ]
+}

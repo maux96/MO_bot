@@ -101,7 +101,6 @@ def enumerate_problems_id(update : Update, context : CallbackContext):
 
 
 @handleExceptions
-@handleSpam
 def solver_info(update : Update, context : CallbackContext):
     solver_id = update.message.text[len(ID_PREFIX):]
     solver_info=get_solver_info(solver_id)
@@ -158,7 +157,7 @@ def button_gen_specific_json(update : Update, context : CallbackContext):
     mess = "Para el problema `"+ solver_id +"` crea un json parecido a este y mandalo con tu solucion (puedes mandarla en un mensaje normal de Telegram 😉 )"
     mess+= "\n\n`"+json+"`\n\n"
     mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor asociado a cada variable. 🙆\n'
-    mess+= 'Sustituye `"TU PARAMETRO"` (quita las comillas 😅) por el valor asociado a cada parámetro. 🙆'
+    mess+= 'Sustituye `"TU_PARAMETRO"` (quita las comillas 😅) por el valor asociado a cada parámetro. 🙆'
     q.from_user.send_message(mess,"Markdown")
 
 
