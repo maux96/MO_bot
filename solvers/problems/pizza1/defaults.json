@@ -1,3 +1,15 @@
-{
-
+{		
+	"precio_base": 200,	
+	"agregos":[
+		{"nombre": "queso" ,"afrodisiaco":5,"energia":7,"gusta":10,"costo": 150},
+		{"nombre": "jamon" ,"afrodisiaco":7,"energia":10,"gusta":15,"costo": 200},
+		{"nombre": "cebolla","afrodisiaco":3,"energia":5,"gusta":8,"costo": 100},
+		{"nombre": "camaron","afrodisiaco":15,"energia":7,"gusta":20,"costo": 300}
+	],
+	"participantes":[
+		{"nombre":"Clotilde","llenura_inicial":50,"minima_llenura":10,"maxima_llenura":100,"dinero":400,"exitacion_inicial":30},
+		{"nombre":"Federico","llenura_inicial":50,"minima_llenura":5,"maxima_llenura":100,"dinero":500,"exitacion_inicial":40},
+		{"nombre":"Alejandre","llenura_inicial":50,"minima_llenura":15,"maxima_llenura":150,"dinero":200,"exitacion_inicial":50}
+	]
 }
+

@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 from time import time
 
+_DEV = False #activar para tener mas precision con los errores, si ocurre un error se detiene la app :D
 
 def handleExceptions(function):
     def insideFunc(update : Update, context : CallbackContext):
@@ -13,7 +14,8 @@ def handleExceptions(function):
             print(e)
             _restore_vars(update.message.from_user.id)
             
-
+    if _DEV:
+    	return function 
 
     return insideFunc
 
