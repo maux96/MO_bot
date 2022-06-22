@@ -158,7 +158,15 @@ def button_gen_specific_json(update : Update, context : CallbackContext):
     mess+= "\n\n`"+json+"`\n\n"
     mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor asociado a cada variable. 🙆\n'
     mess+= 'Sustituye `"TU_PARAMETRO"` (quita las comillas 😅) por el valor asociado a cada parámetro. 🙆'
-    q.from_user.send_message(mess,"Markdown")
+
+    new_message=q.from_user.send_message(mess,"Markdown")
+
+    mess=f"Descripcion de parametros ({solver_id}):\n\n"
+    for v in solver_info["used_params"]:
+        mess+=" -"+ v['name']+" : "+ v["text"] + "\n"   # problema con esto para el Markdown :(
+    mess+= "\n"
+
+    new_message.reply_text(mess)
 
 
 
