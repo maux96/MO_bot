@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 from time import time
 
-_DEV = False #activar para tener mas precision con los errores, si ocurre un error se detiene la app :D
+_DEV = True #activar para tener mas precision con los errores, si ocurre un error se detiene la app :D
 
 def handleExceptions(function):
     def insideFunc(update : Update, context : CallbackContext):

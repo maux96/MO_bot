@@ -1,0 +1,19 @@
+{ 
+    "id":"pizza2",
+    "title":"Lo mejor de una Pizza son sus Ingredientes",
+    "text":"Una pizzerı́a que se decica a hacer pizzas afrodisiaca La pizzerı́a necesita buscar los ingredientes que necesita para comenzar la confección de las pizzas del dı́a",
+    "used_vars":[
+        {"name":"carro_1","text":"Una lista con listas con la cantidad de compras en cada tienda de cada ingrediente, ej: [[1,0,0],[0,0,4],[0,0,0]]"},
+        {"name":"carro_2","text":"Una lista con listas con la cantidad de compras en cada tienda de cada ingrediente, ej: [[1,0,0],[0,0,4],[0,0,0]]"},
+        {"name":"carro_3","text":"Una lista con listas con la cantidad de compras en cada tienda de cada ingrediente, ej: [[1,0,0],[0,0,4],[0,0,0]]"},
+        {"name":"carro_4","text":"Una lista con listas con la cantidad de compras en cada tienda de cada ingrediente, ej: [[1,0,0],[0,0,4],[0,0,0]]"},
+        {"name":"carro_5","text":"Una lista con listas con la cantidad de compras en cada tienda de cada ingrediente, ej: [[1,0,0],[0,0,4],[0,0,0]]"}
+    ],
+    "used_params":[
+        {"name":"proveedores","text":"Una lista con con objetos de la forma \n`{\n\t 'demora':Number,\n\t'demora_por_ingredientes':Number,\n\t'costo_ingredientes':[Number]}`"},
+        {"name":"vehiculos","text":"Una lista con con objetos de la forma \n`{\n\t 'costo_recorrido':Number,\n\t'costo_fijo':Number}`"},
+        {"name":"tiempo_desplazamiento","text":"Costo de desplazamiento de los vehiculos"},
+        {"name":"ingredientes_necesitados","text":"Una lista con la cantidad de ingredientes necesitados en cada posicion."},
+        {"name":"costo_maximo_posible","text":"El costo maximo posible."}
+    ]
+}

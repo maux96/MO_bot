@@ -1,0 +1,16 @@
+{		
+	"proveedores": [
+		{"demora":5,"demora_por_ingredientes":1,"costo_ingredientes": [2,5,1]},
+		{"demora":4,"demora_por_ingredientes":2,"costo_ingredientes": [1,5,4]},
+		{"demora":6,"demora_por_ingredientes":0,"costo_ingredientes": [3,4,2]}
+	],
+	"vehiculos":[
+		{"costo_recorrido":1,"costo_fijo":5},
+		{"costo_recorrido":2,"costo_fijo":3},
+		{"costo_recorrido":3,"costo_fijo":2},
+		{"costo_recorrido":1,"costo_fijo":1},
+		{"costo_recorrido":2,"costo_fijo":1}
+	], 
+	"tiempo_desplazamiento": 2,
+	"ingredientes_necesarios": [0,1,2]
+}

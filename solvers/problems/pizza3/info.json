@@ -1,0 +1,15 @@
+{ 
+    "id":"pizza3",
+    "title":"Para empezar relajados",
+    "text":"NO EStA hecho !!",
+    "used_vars":[
+      {"name":"percucion", "text": "Tiempo de movimiento"},
+      {"name":"frotacion"	,"text": "Tiempo de movimiento"},
+      {"name":"friccion"	,"text": "Tiempo de movimiento"}
+    ],
+    "used_params":[
+        {"name":"precio_base","text":"El precio base de la Pizza"},
+        {"name":"agregos","text":"Todos los agregos con sus respectivas caracteristicas\n`{\n\t'nombre':String,\n\t'afrodisiaco':Number,\n\t'sueño':Number,\n\t'gusta':Number,\n\t'energia':Number,\n\t'costo':Number\n}`"},
+        {"name":"participantes","text":"Todos los participantes con sus respectivas caracteristicas\n`{\n\t'nombre':String,\n\t'llenura_inicial':Number,\n\t'minima_llenura':Number,\n\t'maxima_llenura':Number,\n\t'dinero':Number,\n\t'exitacion_inicial':Number\n}`"}
+    ]
+}
