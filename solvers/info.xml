@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<problem>
+    <id>default_id</id>
+    <title>Test title</title>
+    <text>
+        Hola HolaHolaHolaHolaHolaHolaHolaHolaHolaHolaHolaHolaHolaHolaHolaHolaxdawazucaaaa
+    </text>
+    <used_vars>
+        <variable name="var1">Sirve pa una pila e cosas </variable>
+        <variable name="var2">Sirve2 pa una pila e cosas</variable>
+        <variable name="var3">Sirve3 pa una pila e cosas</variable>
+        <variable name="var4">Sirve4 pa una pila e cosas</variable>
+        <variable name="var5">Sirve5 pa una pila e cosas</variable>
+    </used_vars>
+
+    <used_params>
+        <parameter name="param1"> Representa el valor1 de ....</parameter>
+        <parameter name="param2"> Representa el valor2 de ....</parameter>
+        <parameter name="param3"> Representa el valor3 de ....</parameter>
+        <parameter name="param4"> Representa el valor4 de ....</parameter>
+    </used_params>
+
+</problem>

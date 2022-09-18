@@ -2,12 +2,14 @@
 from os import environ
 from json import dumps
 
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import CallbackQuery, Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, CallbackContext, MessageHandler , Filters
 
-from exception_handler import handleExceptions, handleUnderConstruction, handleSpam
+from exception_handler import handleExceptions, handleUnderConstruction, handleSpam 
 from solvers.dynamic_load import enumerate_solvers, get_solver_info
 from utils import get_veredict
+
+from typing import Tuple, List, Dict, TypedDict
 
 TOKEN = environ["TOKEN"]
 
@@ -43,10 +45,10 @@ def main():
 @handleExceptions
 def start(update : Update, context : CallbackContext):
     id = update.message.from_user.id 
-    
+
     update.message.reply_text("Hola, bienvenido al bot de la asignatura de Modelos de Optimización 🤗🤗🤗.")
     help(update,context)
-   
+
 
     pass
 
@@ -86,7 +88,7 @@ def send_solution_in_message(update : Update, context : CallbackContext):
 def identify_student(update : Update, context : CallbackContext):
     id = update.message.from_user.id 
 
-    name, group = context.args[:2]
+    name, group = context.args[:2] 
 
     print("Se autentico el usuario", name, "del grupo", group)
     update.message.reply_text("Hola "+ name+ ", gracias por autenticarte 🤗.")
@@ -119,10 +121,10 @@ def solver_info(update : Update, context : CallbackContext):
 @handleExceptions
 def button_gen_json(update : Update, context : CallbackContext):
     q = update.callback_query
-
+      
     solver_id=q["data"][len(GEN_JSON_PREFIX):]
     solver_info=get_solver_info(solver_id)
-        
+
     #construimos el JSON
     json = dumps({
         "_id": solver_id,
@@ -130,7 +132,7 @@ def button_gen_json(update : Update, context : CallbackContext):
             v["name"]:"TU_SOLUCION"  for v in solver_info["used_vars"]
         }
     })
-    
+     
     mess = "Para el problema `"+ solver_id +"` crea un json parecido a este y mandalo con tu solucion (puedes mandarla en un mensaje normal de Telegram 😉 )"
     mess+= "\n\n`"+json+"`\n\n"
     mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor asociado a cada variable. 🙆'
@@ -138,9 +140,9 @@ def button_gen_json(update : Update, context : CallbackContext):
 
 def button_gen_specific_json(update : Update, context : CallbackContext):
     q = update.callback_query
-    
+
     solver_id=q["data"][len(GEN_JSON_SPECIFIC_PREFIX):]
-    
+
     solver_info=get_solver_info(solver_id)
         
     #construimos el JSON
