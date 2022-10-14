@@ -7,7 +7,7 @@ from telegram.ext import ContextTypes
 from BaseSolver import UserSolution
 
 from some_utils import get_exported, export
-from load_solvers import get_solver_info, enumerate_available, compare_solution
+from config import solver_provider 
 
 import json 
 
@@ -41,7 +41,11 @@ async def document_handler(update: Update, context: CallbackContext):
 async def enumerate_solvers(update: Update, context: CallbackContext):
     """ Enumera todos los solvers disponibles """
 
-    solvers = enumerate_available() 
+    solvers = solver_provider.enumerate_available() 
+    solvers = [
+        f"{title} (id: {ID_PREFIX}{name})" for title, name in solvers
+    ] 
+
     await update.message.reply_text(
         "AvailableSolvers:\n\n- "+"\n- ".join(solvers))
      
@@ -53,7 +57,7 @@ GEN_JSON_SPECIFIC_PREFIX = "GEN_JSON_SPECIFIC_PREFIX_"
 @export(MessageHandler, filters.Regex(f"^{ID_PREFIX}"))
 async def solver_info(update : Update, context : CallbackContext):
     solver_name = update.message.text[len(ID_PREFIX):]
-    solver_info = get_solver_info(solver_name)
+    solver_info = solver_provider.get_solver_info(solver_name)
     solver_end_string  = solver_info["title"]
     solver_end_string += "  (name:"+ solver_info["name"]+")\n\n"
     solver_end_string += solver_info["description"]+"\n\n"
@@ -77,7 +81,7 @@ async def generate_json_for_solver(update: Update, context: CallbackContext):
     q = update.callback_query
 
     solver_id=q.data[len(GEN_JSON_PREFIX):]
-    solver_info=get_solver_info(solver_id)
+    solver_info=solver_provider.get_solver_info(solver_id)
 
     #construimos el JSON
     builded_json = json.dumps({
@@ -105,9 +109,7 @@ async def generate_specific_json_for_solver(update: Update, context: CallbackCon
 
 @export(MessageHandler,filters.Text())
 async def compare_solution_handler(update: Update, context: CallbackContext):
-    print("flag1") 
     mess = await update.message.reply_text("...estamos trabajando...")
-    print("flag2") 
 
     veredict = get_veredict(update.message.text)
     await mess.edit_text(veredict)
@@ -115,9 +117,8 @@ async def compare_solution_handler(update: Update, context: CallbackContext):
 
 def get_veredict(solution: str):
     user_solution: UserSolution =json.loads(solution) 
-    print(user_solution)
     solver_name :str=user_solution["id"]
-    messages, errors = compare_solution(solver_name,user_solution)
+    messages, errors = solver_provider.compare_solution(solver_name,user_solution)
 
     if errors:
         return ("Errores 😓:\n\n-"+ "\n-".join(errors))
