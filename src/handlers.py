@@ -6,7 +6,7 @@ from telegram.ext import filters
 from telegram.ext import ContextTypes
 
 from some_utils import get_exported, export
-from dynamic_loader import get_solver_info 
+from load_solvers import get_solver_info, enumerate_available
 
 
 def get_handlers():
@@ -34,30 +34,32 @@ async def document_handler(update: Update, context: CallbackContext):
     pass
 
 
-@export(MessageHandler, filters.Text())
-async def execute_python_line(update: Update, context: CallbackContext):
-    await update.message.reply_text(f"solution:\n  {eval(update.message.text)}")
+@export(CommandHandler, "enum")
+async def enumerate_solvers(update: Update, context: CallbackContext):
+
+    solvers = enumerate_available() 
+    await update.message.reply_text("AvailableSolvers:\n\n- "+"\n- ".join(solvers))
      
 
-ID_PREFIX = "/i__"
+ID_PREFIX = "/I__"
 GEN_JSON_PREFIX = "GEN_JSON_PREFIX_"
 GEN_JSON_SPECIFIC_PREFIX = "GEN_JSON_SPECIFIC_PREFIX_"
-
 
 @export(MessageHandler, filters.Regex(f"^{ID_PREFIX}"))
 async def solver_info(update : Update, context : CallbackContext):
     solver_name = update.message.text[len(ID_PREFIX):]
-    solver_info=get_solver_info(solver_name)
-    solver_info = f'{solver_info["title"]}\n\
-        (id: {solver_info["id"]})\n\n\
-        {solver_info["text"]} \n\n\
-        Variables necesarias:\n\
-        -' + '\n -'.join([ var["name"]+" : "+var["text"]
-        for var in  solver_info['used_vars']])
-    #
+    solver_info = get_solver_info(solver_name)
+    solver_end_string  = solver_info["title"]
+    solver_end_string += "  (name:"+ solver_info["name"]+")\n\n"
+    solver_end_string += solver_info["description"]+"\n\n"
+    solver_end_string += "Variables necesarias:\n"
+    solver_end_string += '- ' + '\n- '.join([
+        f"{name}: {desc}" for name, desc in solver_info['variables'].items()
+    ])
+
     buttons = [
         [InlineKeyboardButton("Generar JSON de respuesta",callback_data=GEN_JSON_PREFIX+solver_name)],
         [InlineKeyboardButton("Generar JSON de respuesta específico ",callback_data=GEN_JSON_SPECIFIC_PREFIX+solver_name)],
     ]
-    await update.message.reply_text(solver_info,reply_markup=InlineKeyboardMarkup(buttons))
+    await update.message.reply_text(solver_end_string,reply_markup=InlineKeyboardMarkup(buttons))
     await update.message.delete()

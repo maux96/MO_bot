@@ -7,6 +7,33 @@ class UserSolution(TypedDict):
     values: Dict[str,Any] 
     parameters: Dict[str, Any] | None
 
+class SolverInfo(TypedDict):
+    """ Informacion de un solver reunida. """
+
+    """ Nombre del problema que sirve de identificador, debe ser unico. """
+    name: str
+
+    """ Titulo del problema o nombre completo. """
+    title: str
+
+    """ Descripcion del problema. """
+    description: str
+
+    """ 
+        Variables del problema
+        Descripcion asociada a cada variable. 
+    """
+    variables: Dict[str,str]
+
+    """ 
+        Parametros del problema
+        Cada parametro es una tupla de el valor por defecto y la descripcion 
+        de este.
+    """
+    parameters: Dict[str,Tuple[Any,str]] 
+
+
+
 
 class BaseSolver(ABC):
     """ 
@@ -19,25 +46,38 @@ class BaseSolver(ABC):
         self._messages: List[str]= []
 
         self._default_parameters: Dict[str,Tuple[Any,str]] = {} 
-        self._set_default_params()
+        self._variables_descriptions: Dict[str,str] = {}
+        self._set_default_params_and_variables()
+        self._parameters: Dict[str,Any] = {
+            key:value for key,(value,_) in self._default_parameters.items()
+        } 
 
+        self._name: str = "DefaultName" 
         self._title="DefaultTitle"
         self._text="DefaultText"
         self._set_default_info()
 
     
     @property
-    def Title(self):
+    def title(self):
         return self._title 
 
     @property
-    def Text(self):
+    def text(self):
         return self._text
 
-    def GetParamValue(self, param_name: str):
-        return self._default_parameters[param_name]
+    def get_param_value(self, param_name: str):
+        return self._parameters[param_name]
 
-    def GetParameters(self):
+
+    def get_solver_info(self) -> SolverInfo:
+        return {
+            "name":self._name,
+            "title":self._title,
+            "description":self._text,
+            "variables":self._variables_descriptions,
+            "parameters":self._default_parameters,
+        }
 
 
     @abstractmethod
@@ -62,7 +102,7 @@ class BaseSolver(ABC):
         """
         
     @abstractmethod
-    def _set_default_params(self):
+    def _set_default_params_and_variables(self):
         """ 
             Abstract Method 
             
@@ -92,9 +132,6 @@ class BaseSolver(ABC):
         """
         self._messages.append(message)
 
-    def set_params(self, params: Dict[str, Any]):
-        """ Set specific paramteres for the solver. """
-        raise Exception("Not Implemented!") 
 
     def get_solver_solution(self, solution: UserSolution):
         """ 
@@ -102,6 +139,21 @@ class BaseSolver(ABC):
             Solver que fueron obtenidos en _compare_solution y guardados en 
             self.messages y self._errors respectivamente.
         """
+
+        # verificar que esten todas las variables necesarias
+        for var in self._variables_descriptions:
+            if var not in solution["values"]:
+                raise Exception(f"Mala configuracion de variables, se esperaba\
+                                un valor para la variable '{var}'.")
+
+        if solution["parameters"] != None:
+            self._parameters = solution["parameters"]
+            # verificar que esten todos los parametros necesarios 
+            for p in self._default_parameters:
+                if p not in self._parameters:
+                    raise Exception(f"Mala configuracion de parametros,\
+                                    se esperaba el parametro '{p}'.")
+
         best_solution = self._solve_model(solution) 
         self._compare_solution(best_solution) 
 

@@ -1,11 +1,12 @@
 from gekko.gekko import GKVariable
 from BaseSolver import BaseSolver
-from typing import Dict, Any, Literal
+from typing import Dict, Any 
 from gekko import GEKKO
 
 
 class GotSolver(BaseSolver):
     def _set_default_info(self):
+        self._name="got1"
         self._title="Game Of Thrones I"
         self._text="""Casa Mormont
 
@@ -14,29 +15,35 @@ Necesitamos realizar el mayor daño posible a las tropas enemigas para alcanzar 
 Las espadas se rompen al realizar 15 de daño, los arcos al realizar 10 y las catapultas al realizar 80.
 Las catapultas no hacen daño en área (menuda estafa de sistema).
         """
-    def _set_default_params(self):
+    def _set_default_params_and_variables(self):
         self._default_parameters = {
-            "hierro":600000,
-            "madera":400000,
-            "cuero":800000,
+            "hierro":(600000,"Cantidad de Hierro"),
+            "madera":(400000,"Cantidad de Madera"),
+            "cuero":(800000,"Cantidad de Cuero"),
 
-            "c_h_sword":10,
-            "c_m_sword":2,
-            "c_c_sword":4,
+            "c_h_sword":(10,"Costo de hierro de las espadas"),
+            "c_m_sword":(2, "Costo de madera de las espadas"),
+            "c_c_sword":(4, "Costo de cuero de las espadas"),
 
-            "c_h_bow":2,
-            "c_m_bow":10,
-            "c_c_bow":5,
+            "c_h_bow":(2, "Costo de hierro de los arcos"),
+            "c_m_bow":(10,"Costo de madera de los arcos"),
+            "c_c_bow":(5, "Costo de cuero de los arcos "),
 
-            "c_h_catapult":30,
-            "c_m_catapult":100,
-            "c_c_catapult":50,
+            "c_h_catapult":(30, "Costo de hierro de las catapultas"),
+            "c_m_catapult":(100,"Costo de madera de las catapultas"),
+            "c_c_catapult":(50, "Costo de cuero de las catapultas "),
 
 
-            "sword_damage":15,
-            "bow_damage":10,
-            "catapult_damage":80
+            "sword_damage":(15,"Daño de las espadas"),
+            "bow_damage":(10,"Daño de los arcos"),
+            "catapult_damage":(8,"Daño de las catapultas")
         }
+        self._variables_descriptions= {
+            "amount_swords":"Cantidad de espadas.",
+            "amount_bows":"Cantidad de arcos.",
+            "amount_catapults":"Cantidad de catapultas."
+        }
+
 
     def _solve_model(self):
 
@@ -44,33 +51,33 @@ Las catapultas no hacen daño en área (menuda estafa de sistema).
 
         m.options.SOLVER = 1 # ??
 
-        iron_units = m.Param(value=self.GetParamValue("hierro") )
-        wood_units = m.Param(value=self.GetParamValue("madera") )
-        leather_units = m.Param(value=self.GetParamValue("cuero") )
+        iron_units = m.Param(value=self.get_param_value("hierro") )
+        wood_units = m.Param(value=self.get_param_value("madera") )
+        leather_units = m.Param(value=self.get_param_value("cuero") )
 
         amount_swords    = m.Var(lb = 0,integer=True)
         amount_bows      = m.Var(lb = 0,integer=True)
         amount_catapults = m.Var(lb = 0,integer=True)
 
         #costos
-        c_h_sword = self.GetParamValue("c_h_sword") 
-        c_m_sword = self.GetParamValue("c_m_sword") 
-        c_c_sword = self.GetParamValue("c_c_sword") 
+        c_h_sword = self.get_param_value("c_h_sword") 
+        c_m_sword = self.get_param_value("c_m_sword") 
+        c_c_sword = self.get_param_value("c_c_sword") 
         
-        c_h_bow = self.GetParamValue("c_h_bow") 
-        c_m_bow = self.GetParamValue("c_m_bow") 
-        c_c_bow = self.GetParamValue("c_c_bow") 
+        c_h_bow = self.get_param_value("c_h_bow") 
+        c_m_bow = self.get_param_value("c_m_bow") 
+        c_c_bow = self.get_param_value("c_c_bow") 
 
-        c_h_catapult = self.GetParamValue("c_h_catapult") 
-        c_m_catapult = self.GetParamValue("c_m_catapult") 
-        c_c_catapult = self.GetParamValue("c_c_catapult") 
+        c_h_catapult = self.get_param_value("c_h_catapult") 
+        c_m_catapult = self.get_param_value("c_m_catapult") 
+        c_c_catapult = self.get_param_value("c_c_catapult") 
 
 
         m.Equation(amount_swords*c_h_sword+amount_bows*c_h_bow+amount_catapults*c_h_catapult<=iron_units) #Iron
         m.Equation(amount_swords*c_m_sword+amount_bows*c_m_bow+amount_catapults*c_m_catapult<=wood_units) #Wood
         m.Equation(amount_swords*c_c_sword+amount_bows*c_c_bow+amount_catapults*c_c_catapult<=leather_units) #Leather
 
-        m.Maximize(total_damage(amount_swords,amount_bows,amount_catapults,self._default_parameters))
+        m.Maximize(self.total_damage(amount_swords,amount_bows,amount_catapults))
 
         m.solve(disp = False)
 
@@ -78,28 +85,28 @@ Las catapultas no hacen daño en área (menuda estafa de sistema).
             "amount_swords": amount_swords.VALUE[0],
             "amount_bows": amount_bows.VALUE[0],
             "amount_catapults": amount_catapults.VALUE[0],
-            "obj": total_damage(amount_swords.VALUE[0],amount_bows.VALUE[0],amount_catapults.VALUE[0],self._default_parameters)
+            "obj": self.total_damage(amount_swords.VALUE[0],amount_bows.VALUE[0],amount_catapults.VALUE[0])
         }
 
     def _compare_solution(self, solution: Dict[str, Any]):
         
         #totales
-        t_hierro=self.GetParamValue("hierro") 
-        t_madera=self.GetParamValue("madera") 
-        t_cuero=self.GetParamValue("cuero") 
+        t_hierro=self.get_param_value("hierro") 
+        t_madera=self.get_param_value("madera") 
+        t_cuero=self.get_param_value("cuero") 
 
         #costos
-        c_h_sword = self.GetParamValue("c_h_sword") 
-        c_m_sword = self.GetParamValue("c_m_sword") 
-        c_c_sword = self.GetParamValue("c_c_sword") 
+        c_h_sword = self.get_param_value("c_h_sword") 
+        c_m_sword = self.get_param_value("c_m_sword") 
+        c_c_sword = self.get_param_value("c_c_sword") 
         
-        c_h_bow = self.GetParamValue("c_h_bow") 
-        c_m_bow = self.GetParamValue("c_m_bow") 
-        c_c_bow = self.GetParamValue("c_c_bow") 
+        c_h_bow = self.get_param_value("c_h_bow") 
+        c_m_bow = self.get_param_value("c_m_bow") 
+        c_c_bow = self.get_param_value("c_c_bow") 
 
-        c_h_catapult = self.GetParamValue("c_h_catapult") 
-        c_m_catapult = self.GetParamValue("c_m_catapult") 
-        c_c_catapult = self.GetParamValue("c_c_catapult") 
+        c_h_catapult = self.get_param_value("c_h_catapult") 
+        c_m_catapult = self.get_param_value("c_m_catapult") 
+        c_c_catapult = self.get_param_value("c_c_catapult") 
 
         #mensajes de error personalizados por si no alcanzan los materiales :(
         sword = solution["amount_swords"]
@@ -131,7 +138,7 @@ Las catapultas no hacen daño en área (menuda estafa de sistema).
             return
          
         #calculo de danno 
-        damage_dealt =total_damage(sword,bow,catapult,self._default_parameters)
+        damage_dealt =self.total_damage(sword,bow,catapult)
         best_posible =solution["obj"]
         self._log_message(f'Hemos realizado {damage_dealt} daños en las tropas enemigas')
         if damage_dealt < best_posible*0.98:
@@ -148,13 +155,11 @@ Las catapultas no hacen daño en área (menuda estafa de sistema).
            self._log_message('Que desastre!')
 
 
-
-
-def total_damage(swords: int | GKVariable,bows: int | GKVariable,catapults: int | GKVariable, model_params: Dict[str, Any]):
-    s_d = model_params["sword_damage"]
-    b_d = model_params["bow_damage"]
-    c_d = model_params["catapult_damage"]
-    return s_d*swords+b_d*bows+c_d*catapults
+    def total_damage(self, swords: int | GKVariable, bows: int | GKVariable, catapults: int | GKVariable ):
+        s_d: int = self.get_param_value("sword_damage")
+        b_d: int = self.get_param_value("bow_damage")
+        c_d: int = self.get_param_value("catapult_damage")
+        return s_d*swords+b_d*bows+c_d*catapults
 
 
 
