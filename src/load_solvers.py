@@ -37,6 +37,7 @@ def enumerate_available(id_prefix="/I__") -> List[str]:
     names=listdir(Path("src","solvers"))
     sol = []
     for name in names:
+        # @TODO set the title
         title = "Title"
         if name[-3:] == ".py":
             sol.append(f'{title} ({id_prefix+name[:-3]})')

@@ -1,5 +1,5 @@
 from gekko.gekko import GKVariable
-from BaseSolver import BaseSolver
+from BaseSolver import BaseSolver, UserSolution
 from typing import Dict, Any 
 from gekko import GEKKO
 
@@ -88,7 +88,7 @@ Las catapultas no hacen daño en área (menuda estafa de sistema).
             "obj": self.total_damage(amount_swords.VALUE[0],amount_bows.VALUE[0],amount_catapults.VALUE[0])
         }
 
-    def _compare_solution(self, solution: Dict[str, Any]):
+    def _compare_solution(self, solution: Dict[str,Any], best_solution: Dict[str,Any]):
         
         #totales
         t_hierro=self.get_param_value("hierro") 
@@ -139,7 +139,7 @@ Las catapultas no hacen daño en área (menuda estafa de sistema).
          
         #calculo de danno 
         damage_dealt =self.total_damage(sword,bow,catapult)
-        best_posible =solution["obj"]
+        best_posible =best_solution["obj"]
         self._log_message(f'Hemos realizado {damage_dealt} daños en las tropas enemigas')
         if damage_dealt < best_posible*0.98:
            self._log_message(f'Necesitamos {best_posible*0.98 - damage_dealt} de daño para alcanzar la victoria')

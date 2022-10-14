@@ -1,12 +1,15 @@
 from typing import Tuple, List
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import CallbackContext, CommandHandler, MessageHandler 
+from telegram.ext import CallbackContext, CallbackQueryHandler, CommandHandler, MessageHandler 
 from telegram.ext import filters
 from telegram.ext import ContextTypes
+from BaseSolver import UserSolution
 
 from some_utils import get_exported, export
-from load_solvers import get_solver_info, enumerate_available
+from load_solvers import get_solver_info, enumerate_available, compare_solution
+
+import json 
 
 
 def get_handlers():
@@ -30,15 +33,17 @@ async def help_handler(update: Update, context: CallbackContext):
 
 @export(MessageHandler,filters.Document.ALL)
 async def document_handler(update: Update, context: CallbackContext):
-    await update.message.reply_text("un documento!!")
-    pass
+    #await update.message.reply_text("un documento!!")
+    raise NotImplementedError()
 
 
 @export(CommandHandler, "enum")
 async def enumerate_solvers(update: Update, context: CallbackContext):
+    """ Enumera todos los solvers disponibles """
 
     solvers = enumerate_available() 
-    await update.message.reply_text("AvailableSolvers:\n\n- "+"\n- ".join(solvers))
+    await update.message.reply_text(
+        "AvailableSolvers:\n\n- "+"\n- ".join(solvers))
      
 
 ID_PREFIX = "/I__"
@@ -58,8 +63,67 @@ async def solver_info(update : Update, context : CallbackContext):
     ])
 
     buttons = [
-        [InlineKeyboardButton("Generar JSON de respuesta",callback_data=GEN_JSON_PREFIX+solver_name)],
-        [InlineKeyboardButton("Generar JSON de respuesta específico ",callback_data=GEN_JSON_SPECIFIC_PREFIX+solver_name)],
+        [InlineKeyboardButton("Generar JSON de respuesta",
+                              callback_data=GEN_JSON_PREFIX+solver_name)],
+        [InlineKeyboardButton("Generar JSON de respuesta específico ",
+                              callback_data=GEN_JSON_SPECIFIC_PREFIX+solver_name)],
     ]
-    await update.message.reply_text(solver_end_string,reply_markup=InlineKeyboardMarkup(buttons))
+    await update.message.reply_text(solver_end_string,
+                                    reply_markup=InlineKeyboardMarkup(buttons))
     await update.message.delete()
+
+@export(CallbackQueryHandler, pattern=f"^{GEN_JSON_PREFIX}")
+async def generate_json_for_solver(update: Update, context: CallbackContext):
+    q = update.callback_query
+
+    solver_id=q.data[len(GEN_JSON_PREFIX):]
+    solver_info=get_solver_info(solver_id)
+
+    #construimos el JSON
+    builded_json = json.dumps({
+        "id": solver_id,
+        "values":{
+            name:"TU_SOLUCION"  for name in solver_info["variables"]
+        },
+        "parameters":None
+    })
+     
+    mess = "Para el problema `"+ solver_id +"` crea un json parecido a este y\
+        mandalo con tu solucion\
+        (puedes mandarla en un mensaje normal de Telegram 😉 )"
+    mess+= "\n\n`"+builded_json+"`\n\n"
+    mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor\
+        asociado a cada variable. 🙆'
+
+    await q.from_user.send_message(mess,"Markdown")
+
+
+@export(CallbackQueryHandler, pattern=f"^{GEN_JSON_SPECIFIC_PREFIX}")
+async def generate_specific_json_for_solver(update: Update, context: CallbackContext):
+    pass
+
+
+@export(MessageHandler,filters.Text())
+async def compare_solution_handler(update: Update, context: CallbackContext):
+    print("flag1") 
+    mess = await update.message.reply_text("...estamos trabajando...")
+    print("flag2") 
+
+    veredict = get_veredict(update.message.text)
+    await mess.edit_text(veredict)
+
+
+def get_veredict(solution: str):
+    user_solution: UserSolution =json.loads(solution) 
+    print(user_solution)
+    solver_name :str=user_solution["id"]
+    messages, errors = compare_solution(solver_name,user_solution)
+
+    if errors:
+        return ("Errores 😓:\n\n-"+ "\n-".join(errors))
+    elif messages:
+        return ("Resultados 🤔:\n\n-"+ "\n-".join(messages))
+    else: 
+        return ("No hay nada que mostrar 😅.... de quién será la culpa 😒... ")
+ 
+

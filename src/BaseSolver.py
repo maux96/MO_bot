@@ -81,7 +81,7 @@ class BaseSolver(ABC):
 
 
     @abstractmethod
-    def _solve_model(self, solution: UserSolution) -> Dict[str, Any]:
+    def _solve_model(self) -> Dict[str, Any]:
         """
             Abstract Method 
 
@@ -90,7 +90,7 @@ class BaseSolver(ABC):
         """
 
     @abstractmethod
-    def _compare_solution(self, solution: Dict[str, Any]):
+    def _compare_solution(self, solution: Dict[str, Any], best_solution: Dict[str, Any]):
         """
             Abstract Method 
 
@@ -154,8 +154,9 @@ class BaseSolver(ABC):
                     raise Exception(f"Mala configuracion de parametros,\
                                     se esperaba el parametro '{p}'.")
 
-        best_solution = self._solve_model(solution) 
-        self._compare_solution(best_solution) 
+        best_solution = self._solve_model() 
+        print(best_solution)
+        self._compare_solution(solution["values"], best_solution) 
 
         return self._messages, self._errors
 
