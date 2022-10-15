@@ -16,7 +16,8 @@ class LocalSolverProvider(BaseProvider):
 
         module=module_from_spec(spec)
         spec.loader.exec_module(module)
-        return module.defaultSolver()
+#@TODO  retornar solo la clase, no una instancia de esta...
+        return module.defaultSolver() 
 
 
     def compare_solution(self, solver_name: str ,user_solution: UserSolution):
@@ -39,9 +40,8 @@ class LocalSolverProvider(BaseProvider):
         names=listdir(Path("src","solvers"))
         sol = []
         for name in names:
-            # @TODO set the title
-            title = "Title"
             if name[-3:] == ".py":
+                title = self.get_solver(name[:-3]).title
                 sol.append((title,name[:-3]))
         return sol
 

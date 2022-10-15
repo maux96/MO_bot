@@ -41,42 +41,55 @@ class BaseSolver(ABC):
 
         La definicion y solucion de un problema especifico.
     """
+
+    _name: str =  ""
+    _title: str = ""
+    _text: str  = ""
+
+    _default_parameters: Dict[str,Tuple[Any,str]] = {} 
+    _variables_descriptions: Dict[str,str]  = {} 
+
+    
     def __init__(self):
         self._errors: List[str]= []
         self._messages: List[str]= []
 
-        self._default_parameters: Dict[str,Tuple[Any,str]] = {} 
-        self._variables_descriptions: Dict[str,str] = {}
-        self._set_default_params_and_variables()
+        if not self.is_info_good():
+            raise NotImplementedError("El problema seleccionado no esta completo.")
+
         self._parameters: Dict[str,Any] = {
             key:value for key,(value,_) in self._default_parameters.items()
         } 
+        
+    @classmethod
+    def is_info_good(cls):
+        return bool(cls._name) and \
+               bool(cls._title) and \
+               bool(cls._text) and  \
+               bool(cls._default_parameters) and \
+               bool(cls._variables_descriptions)
 
-        self._name: str = "DefaultName" 
-        self._title="DefaultTitle"
-        self._text="DefaultText"
-        self._set_default_info()
 
     
     @property
-    def title(self):
-        return self._title 
+    def title(cls):
+        return cls._title 
 
     @property
-    def text(self):
-        return self._text
+    def text(cls):
+        return cls._text
 
     def get_param_value(self, param_name: str):
         return self._parameters[param_name]
 
-
-    def get_solver_info(self) -> SolverInfo:
+    @classmethod
+    def get_solver_info(cls) -> SolverInfo:
         return {
-            "name":self._name,
-            "title":self._title,
-            "description":self._text,
-            "variables":self._variables_descriptions,
-            "parameters":self._default_parameters,
+            "name":cls._name,
+            "title":cls._title,
+            "description":cls._text,
+            "variables":cls._variables_descriptions,
+            "parameters":cls._default_parameters,
         }
 
 
@@ -101,22 +114,7 @@ class BaseSolver(ABC):
             con la dada por el usuario.
         """
         
-    @abstractmethod
-    def _set_default_params_and_variables(self):
-        """ 
-            Abstract Method 
-            
-            Establece los parametros por defecto del problema en cuestion.
-        """
-
-    @abstractmethod
-    def _set_default_info(self):
-        """
-            Abstract Method
-
-            Establece el titulo y explicacion del problema en cuestion.
-        """
-
+   
     def _log_error(self, message: str):
         """ 
             Guarda un mensaje de error que se obtuvo en la comparacion de la
@@ -155,7 +153,6 @@ class BaseSolver(ABC):
                                     se esperaba el parametro '{p}'.")
 
         best_solution = self._solve_model() 
-        print(best_solution)
         self._compare_solution(solution["values"], best_solution) 
 
         return self._messages, self._errors

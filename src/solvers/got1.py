@@ -5,44 +5,42 @@ from gekko import GEKKO
 
 
 class GotSolver(BaseSolver):
-    def _set_default_info(self):
-        self._name="got1"
-        self._title="Game Of Thrones I"
-        self._text="""Casa Mormont
 
+    _name="got1"
+    _title="Game Of Thrones I"
+    _text="""Casa Mormont
 Necesitamos que le diga a los jefes de la casa que cantidad de espadas, arcos y catapultas deben fabricar.
 Necesitamos realizar el mayor daño posible a las tropas enemigas para alcanzar la victoria.
 Las espadas se rompen al realizar 15 de daño, los arcos al realizar 10 y las catapultas al realizar 80.
 Las catapultas no hacen daño en área (menuda estafa de sistema).
         """
-    def _set_default_params_and_variables(self):
-        self._default_parameters = {
-            "hierro":(600000,"Cantidad de Hierro"),
-            "madera":(400000,"Cantidad de Madera"),
-            "cuero":(800000,"Cantidad de Cuero"),
+    _default_parameters = {
+        "hierro":(600000,"Cantidad de Hierro"),
+        "madera":(400000,"Cantidad de Madera"),
+        "cuero":(800000,"Cantidad de Cuero"),
 
-            "c_h_sword":(10,"Costo de hierro de las espadas"),
-            "c_m_sword":(2, "Costo de madera de las espadas"),
-            "c_c_sword":(4, "Costo de cuero de las espadas"),
+        "c_h_sword":(10,"Costo de hierro de las espadas"),
+        "c_m_sword":(2, "Costo de madera de las espadas"),
+        "c_c_sword":(4, "Costo de cuero de las espadas"),
 
-            "c_h_bow":(2, "Costo de hierro de los arcos"),
-            "c_m_bow":(10,"Costo de madera de los arcos"),
-            "c_c_bow":(5, "Costo de cuero de los arcos "),
+        "c_h_bow":(2, "Costo de hierro de los arcos"),
+        "c_m_bow":(10,"Costo de madera de los arcos"),
+        "c_c_bow":(5, "Costo de cuero de los arcos "),
 
-            "c_h_catapult":(30, "Costo de hierro de las catapultas"),
-            "c_m_catapult":(100,"Costo de madera de las catapultas"),
-            "c_c_catapult":(50, "Costo de cuero de las catapultas "),
+        "c_h_catapult":(30, "Costo de hierro de las catapultas"),
+        "c_m_catapult":(100,"Costo de madera de las catapultas"),
+        "c_c_catapult":(50, "Costo de cuero de las catapultas "),
 
 
-            "sword_damage":(15,"Daño de las espadas"),
-            "bow_damage":(10,"Daño de los arcos"),
-            "catapult_damage":(8,"Daño de las catapultas")
-        }
-        self._variables_descriptions= {
-            "amount_swords":"Cantidad de espadas.",
-            "amount_bows":"Cantidad de arcos.",
-            "amount_catapults":"Cantidad de catapultas."
-        }
+        "sword_damage":(15,"Daño de las espadas"),
+        "bow_damage":(10,"Daño de los arcos"),
+        "catapult_damage":(8,"Daño de las catapultas")
+    }
+    _variables_descriptions= {
+        "amount_swords":"Cantidad de espadas.",
+        "amount_bows":"Cantidad de arcos.",
+        "amount_catapults":"Cantidad de catapultas."
+    }
 
 
     def _solve_model(self):
