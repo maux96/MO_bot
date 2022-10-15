@@ -33,8 +33,6 @@ class SolverInfo(TypedDict):
     parameters: Dict[str,Tuple[Any,str]] 
 
 
-
-
 class BaseSolver(ABC):
     """ 
         Clase Abtracta

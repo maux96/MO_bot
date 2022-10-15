@@ -151,7 +151,11 @@ async def generate_specific_json_for_solver(update: Update, context: CallbackCon
         asociado a cada variable. 🙆'
     mess+= 'Sustituye `"TU_PARAM"` (quita las comillas 😅) por el valor asociado a cada parámetro. 🙆'
 
+    mess+= '\n\n Parametros:\n- '
+    mess+= "\n- ".join([ f"`{name}`: {info}" for name,(_,info) in solver_info["parameters"].items()])
+
     await q.from_user.send_message(mess,"Markdown")
+
 
 
 @export(MessageHandler,filters.Text())
