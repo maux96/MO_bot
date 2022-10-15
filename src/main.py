@@ -24,7 +24,7 @@ def main():
 async def error_handler(obj: object, context: CallbackContext):
     if isinstance(obj, Update):
         await obj.message.reply_text(
-            f"error raised, Error:\n{context.error}"
+            f"error raised 😱😱😱, Error:\n{context.error}"
         )
 
 

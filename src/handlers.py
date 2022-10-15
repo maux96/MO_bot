@@ -28,9 +28,36 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 @export(CommandHandler,"help")
 async def help_handler(update: Update, context: CallbackContext):
     """ Displays help """
-    await update.message.reply_text("Imprimir ayuda!")
+    message="Para conocer los solvers disponibles usa /enum.\n"
+    message+="Puedes mandar las soluciones en un `*.json`. Este tiene que tener el formato:\n\n"
+    message+="""
+    `
+    {
+        "id":"<id_del_problema>",
+        "values": {
+            "var1": value1,
+            "var2": value2,
+                .
+                .
+                .
+            "varN": valueN
+        },
+        "parameters:"{
+            "param1": valuep1,
+            "param2": valuep2,
+                .
+                .
+                .
+            "paramN": valuepN,
+        }
+    }
+    `
+    """
+    message+="\n\n Siendo `id` el identificador del problema y `valueI` el valor que considera el estudiante que es el correcto para una varible con nombre `varI`."
+    message+="\n En el caso de mandar el campo `parameters:null` se asumen los parametros por defecto del problema."
+    message+="\n\nEl control de errores que hay implementado es muuuuuy simple, asi q suave plis 😓...."
 
-
+    await update.message.reply_text(message,"Markdown")        
 
 @export(CommandHandler, "enum")
 async def enumerate_solvers(update: Update, context: CallbackContext):
@@ -99,8 +126,32 @@ async def generate_json_for_solver(update: Update, context: CallbackContext):
 
 @export(CallbackQueryHandler, pattern=f"^{GEN_JSON_SPECIFIC_PREFIX}")
 async def generate_specific_json_for_solver(update: Update, context: CallbackContext):
-    #@TODO
-    pass
+    q = update.callback_query
+
+    solver_id=q.data[len(GEN_JSON_SPECIFIC_PREFIX):]
+    solver_info=solver_provider.get_solver_info(solver_id)
+
+
+    #construimos el JSON
+    builded_json = json.dumps({
+        "id": solver_id,
+        "values":{
+            name:"TU_SOLUCION"  for name in solver_info["variables"]
+        },
+        "parameters":{
+            name:"TU_PARAM"  for name in solver_info["parameters"]
+        }
+    })
+     
+    mess = "Para el problema `"+ solver_id +"` crea un json parecido a este y\
+        mandalo con tu solucion\
+        (puedes mandarla en un mensaje normal de Telegram 😉 )"
+    mess+= "\n\n`"+builded_json+"`\n\n"
+    mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor\
+        asociado a cada variable. 🙆'
+    mess+= 'Sustituye `"TU_PARAM"` (quita las comillas 😅) por el valor asociado a cada parámetro. 🙆'
+
+    await q.from_user.send_message(mess,"Markdown")
 
 
 @export(MessageHandler,filters.Text())
@@ -133,4 +184,3 @@ def get_veredict(solution: str):
     else: 
         return ("No hay nada que mostrar 😅.... de quién será la culpa 😒... ")
  
-
