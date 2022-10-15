@@ -112,8 +112,13 @@ async def compare_solution_handler(update: Update, context: CallbackContext):
 
 @export(MessageHandler,filters.Document.ALL)
 async def compare_document_solution(update: Update, context: CallbackContext):
-    #await update.message.reply_text("un documento!!")
-    raise NotImplementedError()
+    mess = await update.message.reply_text("...estamos trabajando...")
+
+    solution =  await (await update.message.document.get_file()).download_as_bytearray()
+    solution = str(solution,"utf8")
+
+    veredict = get_veredict(solution)
+    await mess.edit_text(veredict)
 
 
 def get_veredict(solution: str):
