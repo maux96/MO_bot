@@ -6,7 +6,7 @@ from telegram.ext import filters
 from telegram.ext import ContextTypes
 from BaseSolver import UserSolution
 
-from some_utils import get_exported, export
+from export_handlers import get_exported, export
 from config import solver_provider 
 
 import json 
@@ -30,11 +30,6 @@ async def help_handler(update: Update, context: CallbackContext):
     """ Displays help """
     await update.message.reply_text("Imprimir ayuda!")
 
-
-@export(MessageHandler,filters.Document.ALL)
-async def document_handler(update: Update, context: CallbackContext):
-    #await update.message.reply_text("un documento!!")
-    raise NotImplementedError()
 
 
 @export(CommandHandler, "enum")
@@ -104,6 +99,7 @@ async def generate_json_for_solver(update: Update, context: CallbackContext):
 
 @export(CallbackQueryHandler, pattern=f"^{GEN_JSON_SPECIFIC_PREFIX}")
 async def generate_specific_json_for_solver(update: Update, context: CallbackContext):
+    #@TODO
     pass
 
 
@@ -113,6 +109,11 @@ async def compare_solution_handler(update: Update, context: CallbackContext):
 
     veredict = get_veredict(update.message.text)
     await mess.edit_text(veredict)
+
+@export(MessageHandler,filters.Document.ALL)
+async def compare_document_solution(update: Update, context: CallbackContext):
+    #await update.message.reply_text("un documento!!")
+    raise NotImplementedError()
 
 
 def get_veredict(solution: str):
