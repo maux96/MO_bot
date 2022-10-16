@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import List, Dict, Any
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext, CallbackQueryHandler, CommandHandler, MessageHandler 
@@ -15,6 +15,8 @@ import json
 def get_handlers():
     return get_exported()
 
+
+cached_data: Dict[str,Any] = {}
 
 @export(CommandHandler,"start")
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -59,14 +61,19 @@ async def help_handler(update: Update, context: CallbackContext):
 
     await update.message.reply_text(message,"Markdown")        
 
+
 @export(CommandHandler, "enum")
 async def enumerate_solvers(update: Update, context: CallbackContext):
     """ Enumera todos los solvers disponibles """
 
-    solvers = solver_provider.enumerate_available() 
-    solvers = [
-        f"{title} (id: {ID_PREFIX}{name})" for title, name in solvers
-    ] 
+    if "enumerated_solvers" in cached_data:
+        solvers: List[str] = cached_data["enumerated_solvers"]
+    else:
+        solvers_available = solver_provider.enumerate_available() 
+        solvers = [
+            f"{title} (id: {ID_PREFIX}{name})" for title, name in solvers_available
+        ] 
+        cached_data["enumerated_solvers"] = solvers
 
     await update.message.reply_text(
         "AvailableSolvers:\n\n- "+"\n- ".join(solvers))

@@ -16,7 +16,7 @@ class LocalSolverProvider(BaseProvider):
 
         module=module_from_spec(spec)
         spec.loader.exec_module(module)
-#@TODO  retornar solo la clase, no una instancia de esta...
+
         return module.defaultSolver() 
 
 
