@@ -31,6 +31,8 @@ directorio `/src/solvers/`.
 
 La clase abstracta `BaseProvider` da la posibilidad de definir otros proveedores
 de problemas que hereden de esta y establecerlos en el archivo `src/config.py`. 
+Un ejemplo de esto es el proveedor GithubProvider (`src/github_provider.py`) 
+que obtiene los problemas de un repositorio de github dado por el usuario.
 
 ## Añadir problemas por defecto
 
