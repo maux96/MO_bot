@@ -37,7 +37,10 @@ class BaseSolver(ABC):
     """ 
         Clase Abtracta
 
-        La definicion y solucion de un problema especifico.
+        La definicion y solucion de un problema especifico. Las clases 
+        herederas deben sobreescribir las variables estaticas de clase tales
+        como _name, _title, _text, _default_parameters y 
+        _variables_descriptions con los valores asociados al problema.
     """
 
     _name: str =  ""

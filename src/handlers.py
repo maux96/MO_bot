@@ -25,7 +25,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_name = update.effective_user.first_name
     else:
         raise Exception("User Not Identified :(")
-    await update.message.reply_text(f"Hola {user_name}!\n\n Bienvenido al bot de la asignatura Modelos de Optimizacion.")
+    await update.message.reply_text(f"Hola {user_name}!\n\n Bienvenido al bot de la asignatura Modelos de Optimizacion.\n\n\nPara mas info -> /help")
 
 @export(CommandHandler,"help")
 async def help_handler(update: Update, context: CallbackContext):
@@ -66,6 +66,9 @@ async def help_handler(update: Update, context: CallbackContext):
 async def enumerate_solvers(update: Update, context: CallbackContext):
     """ Enumera todos los solvers disponibles """
 
+    mess = await update.message.reply_text("...estamos trabajando...")
+
+
     if "enumerated_solvers" in cached_data:
         solvers: List[str] = cached_data["enumerated_solvers"]
     else:
@@ -75,7 +78,7 @@ async def enumerate_solvers(update: Update, context: CallbackContext):
         ] 
         cached_data["enumerated_solvers"] = solvers
 
-    await update.message.reply_text(
+    await mess.edit_text(
         "AvailableSolvers:\n\n- "+"\n- ".join(solvers))
      
 
@@ -85,6 +88,9 @@ GEN_JSON_SPECIFIC_PREFIX = "GEN_JSON_SPECIFIC_PREFIX_"
 
 @export(MessageHandler, filters.Regex(f"^{ID_PREFIX}"))
 async def solver_info(update : Update, context : CallbackContext):
+
+    mess = await update.message.reply_text("...estamos trabajando...")
+
     solver_name = update.message.text[len(ID_PREFIX):]
     solver_info = solver_provider.get_solver_info(solver_name)
     solver_end_string  = solver_info["title"]
@@ -97,12 +103,12 @@ async def solver_info(update : Update, context : CallbackContext):
 
     buttons = [
         [InlineKeyboardButton("Generar JSON de respuesta",
-                              callback_data=GEN_JSON_PREFIX+solver_name)],
+                    callback_data=GEN_JSON_PREFIX+solver_name)],
         [InlineKeyboardButton("Generar JSON de respuesta específico ",
-                              callback_data=GEN_JSON_SPECIFIC_PREFIX+solver_name)],
+                    callback_data=GEN_JSON_SPECIFIC_PREFIX+solver_name)],
     ]
-    await update.message.reply_text(solver_end_string,
-                                    reply_markup=InlineKeyboardMarkup(buttons))
+    await mess.edit_text(solver_end_string,
+                            reply_markup=InlineKeyboardMarkup(buttons))
     await update.message.delete()
 
 @export(CallbackQueryHandler, pattern=f"^{GEN_JSON_PREFIX}")
@@ -122,17 +128,19 @@ async def generate_json_for_solver(update: Update, context: CallbackContext):
     })
      
     mess = "Para el problema `"+ solver_id +"` crea un json parecido a este y\
-        mandalo con tu solucion\
-        (puedes mandarla en un mensaje normal de Telegram 😉 )"
+    mandalo con tu solucion\
+    (puedes mandarla en un mensaje normal de Telegram 😉 )"
+    
     mess+= "\n\n`"+builded_json+"`\n\n"
     mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor\
-        asociado a cada variable. 🙆'
+    asociado a cada variable. 🙆'
 
     await q.from_user.send_message(mess,"Markdown")
 
 
 @export(CallbackQueryHandler, pattern=f"^{GEN_JSON_SPECIFIC_PREFIX}")
-async def generate_specific_json_for_solver(update: Update, context: CallbackContext):
+async def generate_specific_json_for_solver(update: Update,
+                                            context: CallbackContext):
     q = update.callback_query
 
     solver_id=q.data[len(GEN_JSON_SPECIFIC_PREFIX):]
@@ -151,21 +159,27 @@ async def generate_specific_json_for_solver(update: Update, context: CallbackCon
     })
      
     mess = "Para el problema `"+ solver_id +"` crea un json parecido a este y\
-        mandalo con tu solucion\
-        (puedes mandarla en un mensaje normal de Telegram 😉 )"
+    mandalo con tu solucion\
+    (puedes mandarla en un mensaje normal de Telegram 😉 )"
+
     mess+= "\n\n`"+builded_json+"`\n\n"
     mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor\
-        asociado a cada variable. 🙆'
-    mess+= 'Sustituye `"TU_PARAM"` (quita las comillas 😅) por el valor asociado a cada parámetro. 🙆'
+    asociado a cada variable. 🙆'
+
+    mess+= 'Sustituye `"TU_PARAM"` (quita las comillas 😅) por el valor \
+    asociado a cada parámetro. 🙆'
 
     mess+= '\n\n Parametros:\n- '
-    mess+= "\n- ".join([ f"`{name}`: {info}" for name,(_,info) in solver_info["parameters"].items()])
+    mess+= "\n- ".join(
+        [ f"`{name}`: {info}"
+            for name,(_,info) in solver_info["parameters"].items()
+        ])
 
     await q.from_user.send_message(mess,"Markdown")
 
 
 
-@export(MessageHandler,filters.Text())
+@export(MessageHandler,filters.TEXT & filters.Regex(r'^{'))
 async def compare_solution_handler(update: Update, context: CallbackContext):
     mess = await update.message.reply_text("...estamos trabajando...")
 
