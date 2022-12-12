@@ -8,16 +8,16 @@ class PizzasTantricasSolver(BaseSolver):
 
     _name="pizza1"
     _title="Pizzas Tantricas"
-    _text="""Una pareja quiere tener sexo, pero tiene hambre. Para resolver ese problema, deciden encargar la "mejor pizza posible", y para ello llaman a su pizzerı́a favorita que te permite encargar exactamente la pizza que quieras. Ellos solo ponen una base que tiene un costo de 200, y a partir de ahı́ tú escoges qué agregos le quieres poner :-). De cada agrego conoces: cuán afrodisiaco es, cuánto sueño provoca, cuánta energı́a proporciona (o sea, cuánto llena) y el costo que tiene. Además, de cada participante se conoce su "llenura (o hambre, o energı́a) inicial", sus umbrales mı́nimos y máximos de llenura (si te pasas del máximo te da sueño y si no llegas al mı́nimo la cosa no funciona), su umbral de sueño y su excitación inicial. Tambien se conoce el dinero del que dispone cada persona. Se quiere diseñar la mejor pizza posible.
+    _text="""Una pareja quiere tener sexo, pero tiene hambre. Para resolver ese problema, deciden encargar la "mejor pizza posible", y para ello llaman a su pizzerı́a favorita que te permite encargar exactamente la pizza que quieras. Ellos solo ponen una base que tiene un costo de 200, y a partir de ahı́ tú escoges qué agregos le quieres poner :-). De cada agrego conoces: cuán afrodisiaco es, cuánto sueño provoca, cuánta energı́a proporciona (o sea, cuánto llena) y el costo que tiene. Además, de cada participante se conoce sus umbrales mı́nimos y máximos de llenura (si te pasas del máximo te da sueño y si no llegas al mı́nimo la cosa no funciona), su umbral de sueño y su excitación inicial. Tambien se conoce el dinero del que dispone cada persona. Se quiere diseñar la mejor pizza posible.
 Sabemos de cada ingrediente que: 
-  El queso (afrodisiaco:5, energia:7, costo: 150),
-  El jamon (afrodisiaco:7, energia:10, costo: 200),
-  El cebolla (afrodisiaco:3, energia:5,  costo: 100),
-  El camaron (afrodisiaco:15, energia:7, costo: 300) 
+ -El queso (afrodisiaco:5, energia:7, costo: 150),
+ -El jamon (afrodisiaco:7, energia:10, costo: 200),
+ -El cebolla (afrodisiaco:3, energia:5,  costo: 100),
+ -El camaron (afrodisiaco:15, energia:7, costo: 300) 
 Sabemos de los integrantes que:
-  Clotilde (llenura inicial:50,minima llenura:10,maxima llenura:100,dinero:400,exitacion inicial:30),
-  Federico (llenura inicial:50,minima llenura:5, maxima llenura:100,dinero:500,exitacion inicial:40),
-  Alejandre(llenura inicial:50,minima llenura:15,maxima llenura:150,dinero:200,exitacion inicial:50)
+ -Clotilde (llenura inicial:50,minima llenura:10,maxima llenura:100,dinero:400,exitacion inicial:30),
+ -Federico (llenura inicial:50,minima llenura:5, maxima llenura:100,dinero:500,exitacion inicial:40),
+ -Alejandre(llenura inicial:50,minima llenura:15,maxima llenura:150,dinero:200,exitacion inicial:50)
 
 
 PD: Este solver es dinamico, cuando se modifican las parametros es posible cambiar la cantiadad de agregos y de personas, cada una con sus caracteristicas, por lo que es necesario poner las variables dentro de otra variable en este caso "agregos_comprados".
