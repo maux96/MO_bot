@@ -10,6 +10,7 @@ from export_handlers import get_exported, export
 from config import solver_provider 
 
 import json 
+from json_formating import json_stringify
 
 
 def get_handlers():
@@ -119,15 +120,15 @@ async def generate_json_for_solver(update: Update, context: CallbackContext):
     solver_info=solver_provider.get_solver_info(solver_id)
 
     #construimos el JSON
-    builded_json = json.dumps({
-        "id": solver_id,
+    builded_json = json_stringify({
+        "id": '"'+solver_id+'"',
         "values":{
             name:(solver_info["variables"][name][1]
                   if solver_info["variables"][name][1]!=None
                   else "TU_SOLUCION")
             for name in solver_info["variables"]
         },
-        "parameters":None
+        "parameters":"null"
     })
      
     mess = "Para el problema `"+ solver_id +"` crea un json parecido a este y\
@@ -151,8 +152,8 @@ async def generate_specific_json_for_solver(update: Update,
 
 
     #construimos el JSON
-    builded_json = json.dumps({
-        "id": solver_id,
+    builded_json = json_stringify({
+        "id": '"'+solver_id+'"',
         "values":{
             name:"TU_SOLUCION"  for name in solver_info["variables"]
         },
