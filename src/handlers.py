@@ -1,16 +1,16 @@
 from typing import List, Dict, Any
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import CallbackContext, CallbackQueryHandler, CommandHandler, MessageHandler 
+from telegram.ext import CallbackContext, CallbackQueryHandler,\
+                         CommandHandler, MessageHandler 
 from telegram.ext import filters
 from telegram.ext import ContextTypes
-from BaseSolver import UserSolution
 
 from export_handlers import get_exported, export
 from config import solver_provider 
 
-import json 
-from json_formating import json_stringify
+from tools.json_formating import json_stringify
+from tools.veredict import get_veredict 
 
 
 def get_handlers():
@@ -26,13 +26,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_name = update.effective_user.first_name
     else:
         raise Exception("User Not Identified :(")
-    await update.message.reply_text(f"Hola {user_name}!\n\n Bienvenido al bot de la asignatura Modelos de Optimizacion.\n\n\nPara mas info -> /help")
+    await update.message.reply_text(f"Hola {user_name}!\n\n\
+         Bienvenido al bot de la asignatura Modelos de Optimizacion.\n\n\n\
+         Para mas info -> /help")
 
 @export(CommandHandler,"help")
 async def help_handler(update: Update, context: CallbackContext):
     """ Displays help """
     message="Para conocer los solvers disponibles usa /enum.\n"
-    message+="Puedes mandar las soluciones en un `*.json`. Este tiene que tener el formato:\n\n"
+    message+="Puedes mandar las soluciones en un `*.json`. "
+    message+="Este tiene que tener el formato:\n\n"
     message+="""
     `
     {
@@ -124,7 +127,7 @@ async def generate_json_for_solver(update: Update, context: CallbackContext):
         "id": '"'+solver_id+'"',
         "values":{
             name:(solver_info["variables"][name][1]
-                  if solver_info["variables"][name][1]!=None
+                  if solver_info["variables"][name][1] is not None
                   else "TU_SOLUCION")
             for name in solver_info["variables"]
         },
@@ -136,7 +139,7 @@ async def generate_json_for_solver(update: Update, context: CallbackContext):
     (puedes mandarla en un mensaje normal de Telegram 😉 )"
     
     mess+= "\n\n`"+builded_json+"`\n\n"
-    mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor\
+    mess+= 'Sustituye `TU_SOLUCION` por el valor\
     asociado a cada variable. 🙆'
 
     await q.from_user.send_message(mess,"Markdown")
@@ -167,10 +170,10 @@ async def generate_specific_json_for_solver(update: Update,
     (puedes mandarla en un mensaje normal de Telegram 😉 )"
 
     mess+= "\n\n`"+builded_json+"`\n\n"
-    mess+= 'Sustituye `"TU_SOLUCION"` (quita las comillas 😅) por el valor\
+    mess+= 'Sustituye `TU_SOLUCION` por el valor\
     asociado a cada variable. 🙆'
 
-    mess+= 'Sustituye `"TU_PARAM"` (quita las comillas 😅) por el valor \
+    mess+= 'Sustituye `TU_PARAM` por el valor \
     asociado a cada parámetro. 🙆'
 
     mess+= '\n\n Parametros:\n- '
@@ -201,15 +204,3 @@ async def compare_document_solution(update: Update, context: CallbackContext):
     await mess.edit_text(veredict)
 
 
-def get_veredict(solution: str):
-    user_solution: UserSolution =json.loads(solution) 
-    solver_name :str=user_solution["id"]
-    messages, errors = solver_provider.compare_solution(solver_name,user_solution)
-
-    if errors:
-        return ("Errores 😓:\n\n-"+ "\n-".join(errors))
-    elif messages:
-        return ("Resultados 🤔:\n\n-"+ "\n-".join(messages))
-    else: 
-        return ("No hay nada que mostrar 😅.... de quién será la culpa 😒... ")
- 
