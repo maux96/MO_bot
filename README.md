@@ -40,4 +40,4 @@ Añadir problemas al bot depende del proveedor de problemas, ya que este puede
 incluso ser un servicio online, pero para el proveedor por defecto se debe
 crear una clase que herede de la clase abstracta `BaseSolver` y rellenar con la
 información asociada al problema y los metodos de resolución computarizada de
-este.
+este. 
