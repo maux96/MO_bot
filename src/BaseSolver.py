@@ -23,7 +23,7 @@ class SolverInfo(TypedDict):
         Variables del problema
         Descripcion asociada a cada variable. 
     """
-    variables: Dict[str,str]
+    variables: Dict[str,Tuple[str,Any | None]]
 
     """ 
         Parametros del problema
@@ -48,7 +48,12 @@ class BaseSolver(ABC):
     _text: str  = ""
 
     _default_parameters: Dict[str,Tuple[Any,str]] = {} 
-    _variables_descriptions: Dict[str,str]  = {} 
+
+    # las descripciones de variables y su label en los json,
+    # si el label es None, este se tomara como "TU_SOLUCION",
+    # la idea es que el label sea o None, un string o un diccionario q se va a
+    # compertir posteriormente en JSON.
+    _variables_descriptions: Dict[str,Tuple[str,Any | None]]  = {} 
 
     
     def __init__(self):

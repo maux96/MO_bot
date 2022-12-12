@@ -13,6 +13,12 @@ Necesitamos que le diga a los jefes de la casa que cantidad de espadas, arcos y 
 Necesitamos realizar el mayor daño posible a las tropas enemigas para alcanzar la victoria.
 Las espadas se rompen al realizar 15 de daño, los arcos al realizar 10 y las catapultas al realizar 80.
 Las catapultas no hacen daño en área (menuda estafa de sistema).
+Tenemos disponibles 600000 de hierro, 400000 de madera y 800000 de cuero.
+Las espadas cuestan 10,2,4 de hierro, madera y cuero respectivamente.
+Los arcos cuestan 2,10,5 de hierro, madera y cuero respectivamente.
+Las catapultas cuestan 30,100,50 de hierro, madera y cuero respectivamente.
+
+Maximicemos la cantidad de daño!
         """
     _default_parameters = {
         "hierro":(600000,"Cantidad de Hierro"),
@@ -37,9 +43,9 @@ Las catapultas no hacen daño en área (menuda estafa de sistema).
         "catapult_damage":(8,"Daño de las catapultas")
     }
     _variables_descriptions= {
-        "amount_swords":"Cantidad de espadas.",
-        "amount_bows":"Cantidad de arcos.",
-        "amount_catapults":"Cantidad de catapultas."
+        "amount_swords":("Cantidad de espadas.",None),
+        "amount_bows":("Cantidad de arcos.",None),
+        "amount_catapults":("Cantidad de catapultas.",None)
     }
 
 
@@ -113,6 +119,7 @@ Las catapultas no hacen daño en área (menuda estafa de sistema).
         t_cuero -= sword*c_c_sword
         if t_hierro < 0 or t_madera < 0 or t_cuero < 0:
             self._log_message("No se pueden construir tantas espadas :(")
+            self._log_message(f"Nos quedamos sin material necesitado para las espadas.")
             return
 
         bow = solution["amount_bows"]
@@ -121,6 +128,7 @@ Las catapultas no hacen daño en área (menuda estafa de sistema).
         t_cuero -=  bow*c_c_bow
         if t_hierro < 0 or t_madera < 0 or t_cuero < 0:
             self._log_error("No se pueden construir tantos arcos :(")
+            self._log_message(f"Nos quedamos sin material necesitado para los arcos.")
             return
 
         catapult = solution["amount_catapults"]
@@ -129,6 +137,7 @@ Las catapultas no hacen daño en área (menuda estafa de sistema).
         t_cuero -=  catapult*c_c_catapult
         if t_hierro < 0 or t_madera < 0 or t_cuero < 0:
             self._log_error("No se pueden construir tantas catapultas :(")
+            self._log_message(f"Nos quedamos sin material necesitado para las catapultas.")
             return
 
         if(sword < 0 or bow < 0 or catapult < 0):

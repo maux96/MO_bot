@@ -98,7 +98,7 @@ async def solver_info(update : Update, context : CallbackContext):
     solver_end_string += solver_info["description"]+"\n\n"
     solver_end_string += "Variables necesarias:\n"
     solver_end_string += '- ' + '\n- '.join([
-        f"{name}: {desc}" for name, desc in solver_info['variables'].items()
+        f"{name}: {desc}" for name,(desc,_) in solver_info['variables'].items()
     ])
 
     buttons = [
@@ -122,7 +122,10 @@ async def generate_json_for_solver(update: Update, context: CallbackContext):
     builded_json = json.dumps({
         "id": solver_id,
         "values":{
-            name:"TU_SOLUCION"  for name in solver_info["variables"]
+            name:(solver_info["variables"][name][1]
+                  if solver_info["variables"][name][1]!=None
+                  else "TU_SOLUCION")
+            for name in solver_info["variables"]
         },
         "parameters":None
     })

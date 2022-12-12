@@ -8,7 +8,17 @@ class PizzasTantricasSolver(BaseSolver):
 
     _name="pizza1"
     _title="Pizzas Tantricas"
-    _text="""Una pareja quiere tener sexo, pero tiene hambre. Para resolver ese problema, deciden encargar la "mejor pizza posible", y para ello llaman a su pizzerı́a favorita que te permite encargar exactamente la pizza que quieras. Ellos solo ponen una base que tiene un costo de 1000, y a partir de ahı́ tú escoges qué agregos le quieres poner :-). De cada agrego conoces: cuán afrodisiaco es, cuánto sueño provoca, cuánto gusta, cuánta energı́a proporciona (o sea, cuánto llena) y el costo que tiene. Además, de cada participante se conoce su "llenura (o hambre, o energı́a) inicial", sus umbrales mı́nimos y máximos de llenura (si te pasas del máximo te da sueño y si no llegas al mı́nimo la cosa no funciona), su umbral de sueño y su excitación inicial. Tambien se conoce el dinero del que dispone cada persona. Se quiere diseñar la mejor pizza posible.
+    _text="""Una pareja quiere tener sexo, pero tiene hambre. Para resolver ese problema, deciden encargar la "mejor pizza posible", y para ello llaman a su pizzerı́a favorita que te permite encargar exactamente la pizza que quieras. Ellos solo ponen una base que tiene un costo de 200, y a partir de ahı́ tú escoges qué agregos le quieres poner :-). De cada agrego conoces: cuán afrodisiaco es, cuánto sueño provoca, cuánta energı́a proporciona (o sea, cuánto llena) y el costo que tiene. Además, de cada participante se conoce su "llenura (o hambre, o energı́a) inicial", sus umbrales mı́nimos y máximos de llenura (si te pasas del máximo te da sueño y si no llegas al mı́nimo la cosa no funciona), su umbral de sueño y su excitación inicial. Tambien se conoce el dinero del que dispone cada persona. Se quiere diseñar la mejor pizza posible.
+Sabemos de cada ingrediente que: 
+  El queso (afrodisiaco:5, energia:7, costo: 150),
+  El jamon (afrodisiaco:7, energia:10, costo: 200),
+  El cebolla (afrodisiaco:3, energia:5,  costo: 100),
+  El camaron (afrodisiaco:15, energia:7, costo: 300) 
+Sabemos de los integrantes que:
+  Clotilde (llenura inicial:50,minima llenura:10,maxima llenura:100,dinero:400,exitacion inicial:30),
+  Federico (llenura inicial:50,minima llenura:5, maxima llenura:100,dinero:500,exitacion inicial:40),
+  Alejandre(llenura inicial:50,minima llenura:15,maxima llenura:150,dinero:200,exitacion inicial:50)
+
 
 PD: Este solver es dinamico, cuando se modifican las parametros es posible cambiar la cantiadad de agregos y de personas, cada una con sus caracteristicas, por lo que es necesario poner las variables dentro de otra variable en este caso "agregos_comprados".
     """
@@ -16,23 +26,22 @@ PD: Este solver es dinamico, cuando se modifican las parametros es posible cambi
         "precio_base":(200,"El precio base de la Pizza"),
         
         "agregos":([
-            {"nombre": "queso" ,"afrodisiaco":5,"energia":7,"gusta":10,"costo": 150},
-            {"nombre": "jamon" ,"afrodisiaco":7,"energia":10,"gusta":15,"costo": 200},
-            {"nombre": "cebolla","afrodisiaco":3,"energia":5,"gusta":8,"costo": 100},
-            {"nombre": "camaron","afrodisiaco":15,"energia":7,"gusta":20,"costo": 300}
-        ],"Todos los agregos con sus respectivas caracteristicas:\n`{\n\t'nombre':String,\n\t'afrodisiaco':Number,\n\t'sueño':Number,\n\t'gusta':Number,\n\t'energia':Number,\n\t'costo':Number\n}`"),
+            {"nombre": "queso" ,"afrodisiaco":5,"energia":7,"costo": 150},
+            {"nombre": "jamon" ,"afrodisiaco":7,"energia":10,"costo": 200},
+            {"nombre": "cebolla","afrodisiaco":3,"energia":5,"costo": 100},
+            {"nombre": "camaron","afrodisiaco":15,"energia":7,"costo": 300}
+        ],"Todos los agregos con sus respectivas caracteristicas:\n`{\n\t'nombre':String,\n\t'afrodisiaco':Number,\n\t'sueño':Number,\n\t'energia':Number,\n\t'costo':Number\n}`"),
         "participantes":([
-		{"nombre":"Clotilde","llenura_inicial":50,"minima_llenura":10,"maxima_llenura":100,"dinero":400,"exitacion_inicial":30},
-		{"nombre":"Federico","llenura_inicial":50,"minima_llenura":5,"maxima_llenura":100,"dinero":500,"exitacion_inicial":40},
-		{"nombre":"Alejandre","llenura_inicial":50,"minima_llenura":15,"maxima_llenura":150,"dinero":200,"exitacion_inicial":50}
-	    ],"Todos los participantes con sus respectivas caracteristicas\n`{\n\t'nombre':String,\n\t'llenura_inicial':Number,\n\t'minima_llenura':Number,\n\t'maxima_llenura':Number,\n\t'dinero':Number,\n\t'exitacion_inicial':Number\n}`")
+		{"nombre":"Clotilde", "minima_llenura":10,"maxima_llenura":100,"dinero":400,"exitacion_inicial":30},
+		{"nombre":"Federico", "minima_llenura":5,"maxima_llenura":100,"dinero":500,"exitacion_inicial":40},
+		{"nombre":"Alejandre","minima_llenura":15,"maxima_llenura":150,"dinero":200,"exitacion_inicial":50}
+	    ],"Todos los participantes con sus respectivas caracteristicas\n`{\n\t'nombre':String,\n\t'minima_llenura':Number,\n\t'maxima_llenura':Number,\n\t'dinero':Number,\n\t'exitacion_inicial':Number\n}`")
 
     }
     _variables_descriptions= {
-        "agregos_comprados":"""
-    Diccionario de cantidad Agregos comprados:
-     {"queso":Number, "jamon":Number, "cebolla":Number, "camaron":Number}
-         """
+        "agregos_comprados":("Diccionario de cantidad Agregos comprados.",
+                             {"queso":"TU_SOLUCION", "jamon":"TU_SOLUCION",
+                              "cebolla":"TU_SOLUCION", "camaron":"TU_SOLUCION"})
     }
 
 
@@ -45,15 +54,12 @@ PD: Este solver es dinamico, cuando se modifican las parametros es posible cambi
         agregos = self.get_param_value("agregos")
         a_afrodisiaco = { a["nombre"]:m.Const(value=a["afrodisiaco"]) for a in agregos } 
         a_energia = { a["nombre"]:m.Const(value=a["energia"]) for a in agregos } 
-        #ignoremos el gusto por ahora ...
-        #a_gusta = { a["nombre"]:m.Param(value=a["gusta"]) for a in agregos } 
         a_costo = { a["nombre"]:m.Const(value=a["costo"]) for a in agregos } 
         precio_base = m.Const(self.get_param_value("precio_base"))
         #Cantidad de Agregos comprados de cada tipo
         a_comprado= { a["nombre"]:m.Var(lb=0, integer=True) for a in agregos } 
 
         participantes = self.get_param_value("participantes")
-        p_llenura_inicial= { p["nombre"]:m.Param(value=p["llenura_inicial"]) for p in participantes } 
         p_minima_llenura= { p["nombre"]:m.Param(value=p["minima_llenura"]) for p in participantes } 
         p_maxima_llenura= { p["nombre"]:m.Param(value=p["maxima_llenura"]) for p in	participantes } 
         p_dinero= { p["nombre"]:m.Param(value=p["dinero"]) for p in participantes } 
